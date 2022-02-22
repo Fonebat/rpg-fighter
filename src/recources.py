@@ -11,7 +11,8 @@ class Character:
         
     def take_damage(self, damage):
         relative_damage = damage - self.armor
-        self.health-= relative_damage
+        if relative_damage > 0:
+            self.health -= relative_damage
         if self.health < 0: self.health = 0
     
     def get_attack(self): #tidigare damage
@@ -22,6 +23,9 @@ class Character:
     
     def get_name(self):
         return self.name
+
+    def get_attributes(self):
+        return self.name, self.health, self.attack, self.armor
 
 class Goblin:
 
@@ -47,3 +51,28 @@ class Goblin:
 
     def get_name(self):
         return f"Goblin #{self.id}"
+
+
+def save_character(chars : list()):
+    save_list = []
+    for char in chars:
+        name, health, attack, armor = char.get_attributes()
+        save_string = f"{name}/{health}/{attack}/{armor}\n"
+        save_list.append(save_string)
+    with open("saved_characters.txt", "w", encoding="utf8") as f:
+        for char in save_list:
+            f.write(char)
+        print("Characters has been saved!")
+
+def load_characters():
+    characters = []
+    with open("saved_characters.txt", "r", encoding="utf8") as f:
+        for line in f.readlines():
+            attributes = line.split("/")
+            char = Character(attributes[0],
+                             int(attributes[1]),
+                             int(attributes[2]),
+                             int(attributes[3]))
+            
+            characters.append(char)
+    return characters
